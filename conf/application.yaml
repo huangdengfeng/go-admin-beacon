@@ -1,0 +1,28 @@
+server:
+  name: go-admin-beacon
+  listen: :8081
+  # s
+  shutdownTimeout: 30
+log:
+  filename: logs/app.log
+  # M
+  maxSize: 1024
+  # Day
+  maxAge: 10
+  level: debug
+  reportCaller: false
+  outputToConsole: true
+db:
+  # user:password , timeout for connection timeout
+  dsn: '%s:%s@tcp(127.0.0.1:3306)/admin-beacon?charset=utf8mb4&parseTime=True&loc=Local&timeout=1s'
+  user: root
+  password: 12345678
+  maxOpenConns: 10
+  maxIdleConns: 1
+  # s
+  connMaxLifetime: 3600
+  # s
+  connMaxIdleTime: 600
+
+
+
