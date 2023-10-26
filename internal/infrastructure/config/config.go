@@ -120,6 +120,7 @@ func initLog() {
 		LocalTime:  true,
 	}
 	log.SetReportCaller(logConf.ReportCaller)
+	log.SetFormatter(&log.TextFormatter{FullTimestamp: true, TimestampFormat: time.StampMilli})
 	if !logConf.OutputToConsole {
 		log.SetOutput(logger)
 	}

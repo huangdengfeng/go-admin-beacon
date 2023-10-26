@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"context"
 	"go-admin-beacon/internal/infrastructure/config"
 	"gorm.io/gorm"
 )
@@ -14,5 +15,6 @@ func getDb() *gorm.DB {
 	if config.DebugEnable {
 		return config.SqlClient.Debug()
 	}
-	return config.SqlClient
+	// WithContext 返回是每个会话，可以DB sql之前互不干扰
+	return config.SqlClient.WithContext(context.Background())
 }
