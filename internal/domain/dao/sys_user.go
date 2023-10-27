@@ -7,21 +7,27 @@ import (
 )
 
 type SysUserPO struct {
-	Uid        int32 `gorm:"primaryKey"`
-	UserName   string
-	Password   string
-	SecretKey  string
-	Name       string
-	Mobile     string
-	Email      string
-	Photo      string
+	Uid int32 `gorm:"primaryKey"`
+	// Not null
+	UserName string
+	Password string
+	// Not null
+	SecretKey string
+	// Not null
+	Name   string
+	Mobile string
+	Email  string
+	Photo  string
+	// Not null
 	Status     int8
 	CreateUser int32
-	CreateTime time.Time `gorm:"autoCreateTime"`
+	CreateTime time.Time
 	UpdateUser int32
-	UpdateTime time.Time `gorm:"autoUpdateTime"`
+	UpdateTime time.Time
 	Remark     string
 }
+
+var sysUserAllowedFields = []string{"createTime"}
 
 // SysUserPOCondion 多条件查询
 type SysUserPOCondion struct {
@@ -29,6 +35,7 @@ type SysUserPOCondion struct {
 	FuzzyName string
 	Name      string
 	Status    *int8
+	OrderBy   string
 }
 
 // TableName 自定义表名
@@ -55,6 +62,13 @@ func (s *SysUserDao) FindByPage(condition *SysUserPOCondion, page int, pageSize 
 	}
 	if condition.Status != nil {
 		db.Where("status = ?", condition.Status)
+	}
+	if condition.OrderBy != "" {
+		if convertedOrder, err := checkAndConvertOrder(condition.OrderBy, sysUserAllowedFields); err != nil {
+			return nil, nil, err
+		} else {
+			db.Order(convertedOrder)
+		}
 	}
 	var users []SysUserPO
 	if result := db.Find(&users); result.Error != nil {
