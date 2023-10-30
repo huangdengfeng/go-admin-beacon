@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"go-admin-beacon/internal/infrastructure/constants"
 	"go-admin-beacon/internal/infrastructure/errors"
 	"gorm.io/gorm"
 	"time"
@@ -29,13 +30,14 @@ type SysUserPO struct {
 
 var sysUserAllowedFields = []string{"createTime"}
 
-// SysUserPOCondion 多条件查询
-type SysUserPOCondion struct {
-	UserName  string
-	FuzzyName string
-	Name      string
-	Status    *int8
-	OrderBy   string
+// SysUserPOCondition 多条件查询
+type SysUserPOCondition struct {
+	UserName        string
+	FuzzyName       string
+	Name            string
+	Status          *int8
+	IncludeSysAdmin bool
+	OrderBy         string
 }
 
 // TableName 自定义表名
@@ -49,7 +51,7 @@ type SysUserDao struct {
 
 var SysUserDaoInstance = &SysUserDao{&dao{getDb}}
 
-func (s *SysUserDao) FindByPage(condition *SysUserPOCondion, page int, pageSize int) (*[]SysUserPO, *int64, error) {
+func (s *SysUserDao) FindByPage(condition *SysUserPOCondition, page int, pageSize int) (*[]SysUserPO, *int64, error) {
 	db := s.db().Limit(pageSize).Offset(pageSize * (page - 1))
 	if condition.UserName != "" {
 		db.Where("user_name = ?", condition.UserName)
@@ -63,6 +65,10 @@ func (s *SysUserDao) FindByPage(condition *SysUserPOCondion, page int, pageSize 
 	if condition.Status != nil {
 		db.Where("status = ?", condition.Status)
 	}
+	if !condition.IncludeSysAdmin {
+		db.Not("uid = ?", constants.SuperAdminUserId)
+	}
+
 	if condition.OrderBy != "" {
 		if convertedOrder, err := checkAndConvertOrder(condition.OrderBy, sysUserAllowedFields); err != nil {
 			return nil, nil, err

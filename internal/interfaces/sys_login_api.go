@@ -20,6 +20,6 @@ func (s *sysLoginApi) UserPasswdLogin(c *gin.Context) {
 		c.JSON(http.StatusOK, response.ErrorWithCodeMsg(errors.BadArgs.Code, err.Error()))
 		return
 	}
-	response := userPasswdLoginExe.UserPasswd(cmd)
+	response := userPasswdLoginExe.Execute(cmd)
 	c.JSON(http.StatusOK, response)
 }

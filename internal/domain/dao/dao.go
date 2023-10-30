@@ -19,7 +19,7 @@ type dao struct {
 
 func getDb() *gorm.DB {
 	if config.DebugEnable {
-		return config.SqlClient.Debug()
+		return config.SqlClient.Debug().WithContext(context.Background())
 	}
 	// WithContext 返回是每个会话，可以DB sql之前互不干扰
 	return config.SqlClient.WithContext(context.Background())

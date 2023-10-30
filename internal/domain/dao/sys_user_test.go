@@ -140,7 +140,7 @@ func TestSysUserDao_FindByPage(t *testing.T) {
 		dao: &dao{getDb},
 	}
 	status := int8(1)
-	users, total, err := s.FindByPage(&SysUserPOCondion{
+	users, total, err := s.FindByPage(&SysUserPOCondition{
 		UserName:  "admin",
 		FuzzyName: "管理员",
 		Name:      "管理员",

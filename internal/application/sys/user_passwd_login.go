@@ -23,7 +23,7 @@ func NewUserPasswdLoginExe() *userPasswdLoginExe {
 	return &userPasswdLoginExe{userPasswdVerifyService: sys.UserPasswdVerifyServiceInstance}
 }
 
-func (e *userPasswdLoginExe) UserPasswd(cmd *UserPasswdLoginCmd) *response.Response {
+func (e *userPasswdLoginExe) Execute(cmd *UserPasswdLoginCmd) *response.Response {
 	verify, err := e.userPasswdVerifyService.Verify(cmd.Username, cmd.Password)
 	if nil != err {
 		return response.Error(err)
