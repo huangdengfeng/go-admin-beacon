@@ -7,4 +7,6 @@ var SqlError = New(1002, "sql errors:%s")
 var RowsAffectedNotMatch = New(1003, "rows affected:%d")
 var OrderByNotAllowed = New(1004, "orderBy not allowed")
 
+var UserNotExists = New(2004, "用户名不存在")
 var UserPasswdWrong = New(2005, "用户名或密码错误")
+var AuthNotPass = New(2006, "认证不通过")

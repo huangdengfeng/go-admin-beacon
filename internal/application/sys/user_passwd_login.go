@@ -17,10 +17,11 @@ type AuthorizationTokenCO struct {
 
 type userPasswdLoginExe struct {
 	userPasswdVerifyService *sys.UserPasswdVerifyService
+	userTokenService        *sys.UserTokenService
 }
 
 func NewUserPasswdLoginExe() *userPasswdLoginExe {
-	return &userPasswdLoginExe{userPasswdVerifyService: sys.UserPasswdVerifyServiceInstance}
+	return &userPasswdLoginExe{userPasswdVerifyService: sys.UserPasswdVerifyServiceInstance, userTokenService: sys.UserTokenServiceInstance}
 }
 
 func (e *userPasswdLoginExe) Execute(cmd *UserPasswdLoginCmd) *response.Response {
@@ -33,6 +34,9 @@ func (e *userPasswdLoginExe) Execute(cmd *UserPasswdLoginCmd) *response.Response
 		return response.Error(errors.UserPasswdWrong)
 	}
 	// 颁发token
-	token := "i am token for you"
+	token, err := e.userTokenService.Create(cmd.Username)
+	if nil != err {
+		return response.Error(err)
+	}
 	return response.Success(&AuthorizationTokenCO{token})
 }

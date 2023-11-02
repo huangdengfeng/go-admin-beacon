@@ -19,6 +19,6 @@ func (s *sysUserApi) UserPageQry(c *gin.Context) {
 		c.JSON(http.StatusOK, response.ErrorWithCodeMsg(errors.BadArgs.Code, err.Error()))
 		return
 	}
-	response := userPageQryExe.Execute(qry)
+	response := userPageQryExe.Execute(c, qry)
 	c.JSON(http.StatusOK, response)
 }

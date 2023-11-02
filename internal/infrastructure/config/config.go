@@ -19,6 +19,11 @@ import (
 var once sync.Once
 
 type Config struct {
+	Login struct {
+		// Min
+		AccessTokenExpire time.Duration
+		TokenSignKey      string `json:"-"`
+	}
 	Server struct {
 		Name string
 		// eg :8080

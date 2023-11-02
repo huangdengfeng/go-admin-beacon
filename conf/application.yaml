@@ -1,6 +1,9 @@
+Login:
+  accessTokenExpire: 10
+  tokenSignKey: "MBe&ekkoIp_5WAlhd&vIbbllxIjT6iMB"
 server:
   name: go-admin-beacon
-  listen: :8081
+  listen: :8080
   # s
   shutdownTimeout: 30
 log:

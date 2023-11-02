@@ -1,6 +1,7 @@
 package sys
 
 import (
+	"context"
 	"go-admin-beacon/internal/domain/dao"
 	"go-admin-beacon/internal/infrastructure/request"
 	"go-admin-beacon/internal/infrastructure/response"
@@ -38,7 +39,7 @@ func NewUserPageQryExe() *userPageQryExe {
 	return &userPageQryExe{dao.SysUserDaoInstance}
 }
 
-func (e *userPageQryExe) Execute(qry *UserPageQry) *response.Response {
+func (e *userPageQryExe) Execute(_ context.Context, qry *UserPageQry) *response.Response {
 	condition := &dao.SysUserPOCondition{
 		UserName:  qry.UserName,
 		FuzzyName: qry.FuzzyName,

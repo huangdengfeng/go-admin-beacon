@@ -2,6 +2,7 @@ package sys
 
 import (
 	"go-admin-beacon/internal/domain/dao"
+	"go-admin-beacon/internal/infrastructure/security"
 )
 
 type UserPasswdVerifyService struct {
@@ -13,14 +14,13 @@ var UserPasswdVerifyServiceInstance = &UserPasswdVerifyService{
 }
 
 func (s *UserPasswdVerifyService) Verify(userName string, password string) (bool, error) {
-	if po, err := s.sysUserDao.FindByUserName(userName); nil != err {
+	po, err := s.sysUserDao.FindByUserName(userName)
+	if nil != err {
 		return false, err
-	} else {
-		// 用户不存在
-		if nil == po {
-			return false, nil
-		}
-		// 验证密码
-		return true, nil
 	}
+	// 用户不存在
+	if po == nil {
+		return false, nil
+	}
+	return security.PasswordMatches(password, po.Password), nil
 }
