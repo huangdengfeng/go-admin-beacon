@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"context"
 	"go-admin-beacon/internal/infrastructure/config"
 	"log"
 	"os"
@@ -32,6 +33,7 @@ func TestSysUserDao_FindByUid(t *testing.T) {
 		dao *dao
 	}
 	type args struct {
+		ctx context.Context
 		uid int32
 	}
 	tests := []struct {
@@ -44,7 +46,7 @@ func TestSysUserDao_FindByUid(t *testing.T) {
 		{
 			name:    "正常用例",
 			fields:  fields{&dao{getDb}},
-			args:    args{uid: 1},
+			args:    args{ctx: withTxDb(context.Background(), getDb()), uid: 1},
 			want:    &SysUserPO{Uid: 1},
 			wantErr: false,
 		},
@@ -54,7 +56,7 @@ func TestSysUserDao_FindByUid(t *testing.T) {
 			s := &SysUserDao{
 				dao: tt.fields.dao,
 			}
-			got, err := s.FindByUid(tt.args.uid)
+			got, err := s.FindByUid(tt.args.ctx, tt.args.uid)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FindByUid() error = %v, wantErr %v", err, tt.wantErr)
 				return

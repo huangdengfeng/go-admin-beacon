@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"context"
 	"go-admin-beacon/internal/infrastructure/constants"
 	"go-admin-beacon/internal/infrastructure/errors"
 	"gorm.io/gorm"
@@ -51,7 +52,7 @@ type SysUserDao struct {
 
 var SysUserDaoInstance = &SysUserDao{&dao{getDb}}
 
-func (s *SysUserDao) FindByPage(condition *SysUserPOCondition, page int, pageSize int) (*[]SysUserPO, *int64, error) {
+func (s *SysUserDao) FindByPage(condition *SysUserPOCondition, page int, pageSize int) ([]*SysUserPO, *int64, error) {
 	db := s.db().Limit(pageSize).Offset(pageSize * (page - 1))
 	if condition.UserName != "" {
 		db.Where("user_name = ?", condition.UserName)
@@ -76,7 +77,7 @@ func (s *SysUserDao) FindByPage(condition *SysUserPOCondition, page int, pageSiz
 			db.Order(convertedOrder)
 		}
 	}
-	var users []SysUserPO
+	var users []*SysUserPO
 	if result := db.Find(&users); result.Error != nil {
 		return nil, nil, result.Error
 	}
@@ -84,13 +85,13 @@ func (s *SysUserDao) FindByPage(condition *SysUserPOCondition, page int, pageSiz
 	if result := db.Count(&total); result.Error != nil {
 		return nil, nil, result.Error
 	}
-	return &users, &total, nil
+	return users, &total, nil
 }
 
-func (s *SysUserDao) FindByUid(uid int32) (*SysUserPO, error) {
+func (s *SysUserDao) FindByUid(ctx context.Context, uid int32) (*SysUserPO, error) {
 	var po SysUserPO
 	// .Clauses(clause.Locking{Strength: "UPDATE"})
-	result := s.db().Take(&po, "uid = ?", uid)
+	result := getDbFromContext(ctx).Take(&po, "uid = ?", uid)
 	if nil == result.Error {
 		return &po, nil
 	}

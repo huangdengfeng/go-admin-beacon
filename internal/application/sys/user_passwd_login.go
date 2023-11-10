@@ -1,5 +1,7 @@
 package sys
 
+// 账号密码登录
+
 import (
 	"go-admin-beacon/internal/domain/sys"
 	"go-admin-beacon/internal/infrastructure/errors"

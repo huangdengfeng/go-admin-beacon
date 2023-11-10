@@ -17,13 +17,11 @@ type TokenInfo struct {
 }
 
 func CreateToken(tokenInfo *TokenInfo, expire time.Duration, secretKey []byte) (string, error) {
-	info := jwt.New(jwt.SigningMethodHS256, func(token *jwt.Token) {
-		token.Claims = jwt.MapClaims{
-			"id":       tokenInfo.TokenId,
-			"sub":      tokenInfo.Subject,
-			"checkSum": tokenInfo.CheckSum,
-			"exp":      time.Now().Add(expire).Unix(),
-		}
+	info := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"id":       tokenInfo.TokenId,
+		"sub":      tokenInfo.Subject,
+		"checkSum": tokenInfo.CheckSum,
+		"exp":      time.Now().Add(expire).Unix(),
 	})
 	if token, err := info.SignedString(secretKey); err != nil {
 		return "", err

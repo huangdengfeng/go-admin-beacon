@@ -1,5 +1,7 @@
 package sys
 
+// 用户分页信息查询
+
 import (
 	"context"
 	"go-admin-beacon/internal/domain/dao"
@@ -32,7 +34,7 @@ type UserCO struct {
 }
 
 type userPageQryExe struct {
-	*dao.SysUserDao
+	sysUserDao *dao.SysUserDao
 }
 
 func NewUserPageQryExe() *userPageQryExe {
@@ -47,14 +49,14 @@ func (e *userPageQryExe) Execute(_ context.Context, qry *UserPageQry) *response.
 		OrderBy:   qry.OrderBy,
 	}
 
-	pos, total, err := e.SysUserDao.FindByPage(condition, qry.Page, qry.PageSize)
+	pos, total, err := e.sysUserDao.FindByPage(condition, qry.Page, qry.PageSize)
 	if err != nil {
 		return response.Error(err)
 	}
 
-	cos := make([]UserCO, 0, len(*pos))
+	cos := make([]UserCO, 0, len(pos))
 
-	for _, po := range *pos {
+	for _, po := range pos {
 		cos = append(cos, UserCO{
 			Uid:        po.Uid,
 			UserName:   po.UserName,

@@ -8,3 +8,5 @@ package constants
 const SuperAdminUserId = 1
 const Comma = ","
 const Underline = "_"
+const DbNormalStatus = 1
+const DbInvalidStatus = 2

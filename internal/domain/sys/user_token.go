@@ -1,5 +1,7 @@
 package sys
 
+// 登录token创建
+
 import (
 	"crypto/sha256"
 	"encoding/hex"
