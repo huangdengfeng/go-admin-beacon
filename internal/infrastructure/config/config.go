@@ -24,6 +24,15 @@ type Config struct {
 		AccessTokenExpire time.Duration
 		TokenSignKey      string `json:"-"`
 	}
+	Cors struct {
+		// 总开关
+		Enable bool
+		// * 全部，为了安全可以按实际填写，如http://www.seezoon.com
+		AllowOrigins     []string
+		AllowCredentials bool
+		// S
+		MaxAge time.Duration
+	}
 	Server struct {
 		Name string
 		// eg :8080
@@ -64,6 +73,11 @@ var (
 	ServerConfigPath = defaultConfigPath
 	Global           = new(Config)
 	SqlClient        *gorm.DB
+	AppDictInstance  = make(map[string][]*struct {
+		Value    any
+		Name     string
+		Disabled bool
+	})
 )
 
 // Init 初始化业务全局配置
@@ -102,7 +116,25 @@ func Init() {
 		}
 		initLog()
 		initDB()
+		initDicts(fullConfigPath)
 	})
+}
+func initDicts(fullConfigPath string) {
+	viper := viper.New()
+	viper.AddConfigPath(fullConfigPath)
+	viper.SetConfigName("dict")
+	viper.SetConfigType(configType)
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("read dict file errors:%s", err)
+	}
+	if err := viper.Unmarshal(&AppDictInstance); err != nil {
+		log.Fatalf("unmarshal dict file errors:%s", err)
+	}
+	if marshal, err := json.Marshal(&AppDictInstance); err != nil {
+		log.Fatalf("json unmarshal errors:%s", err)
+	} else {
+		log.Infof("dicts is:%s\n", marshal)
+	}
 }
 
 // 初始化log https://github.com/sirupsen/logrus

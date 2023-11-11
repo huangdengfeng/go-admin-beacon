@@ -1,6 +1,14 @@
-Login:
+login:
+  # M
   accessTokenExpire: 10
   tokenSignKey: "MBe&ekkoIp_5WAlhd&vIbbllxIjT6iMB"
+cors:
+  enable: true
+  allowOrigins:
+    - "*"
+  allowCredentials: true
+  # S
+  maxAge: 1800
 server:
   name: go-admin-beacon
   listen: :8080
@@ -26,6 +34,7 @@ db:
   connMaxLifetime: 3600
   # s
   connMaxIdleTime: 600
+
 
 
 

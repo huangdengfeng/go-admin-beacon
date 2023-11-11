@@ -9,7 +9,7 @@ import (
 
 type MyInfoCO struct {
 	// 用户名
-	UserName string `json:"user_name"`
+	UserName string `json:"userName"`
 	// 姓名
 	Name string `json:"name"`
 	// 手机号

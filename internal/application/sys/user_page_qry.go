@@ -54,7 +54,7 @@ func (e *userPageQryExe) Execute(_ context.Context, qry *UserPageQry) *response.
 		return response.Error(err)
 	}
 
-	cos := make([]UserCO, 0, len(pos))
+	cos := make([]UserCO, len(pos))
 
 	for _, po := range pos {
 		cos = append(cos, UserCO{

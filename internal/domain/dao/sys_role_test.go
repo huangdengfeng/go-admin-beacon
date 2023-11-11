@@ -1,17 +1,17 @@
 package dao
 
 import (
-	"context"
+	"fmt"
 	"testing"
 	"time"
 )
 
 func TestSysRoleDao_FindRolesByUid(t *testing.T) {
-	DoTransaction(context.Background(), func(ctx context.Context) error {
-		roles, err := SysRoleDaoInstance.FindRolesByUid(ctx, 1)
-		t.Logf("roles:%+v,error:%v", roles, err)
-		return nil
-	})
+	s := make([]SysRolePO, 0, 10)
+	r := SysRolePO{Name: "test"}
+	s = append(s, r)
+	r.Name = "test1"
+	fmt.Printf(s[0].Name)
 }
 
 func TestSysRolePO_TableName(t *testing.T) {
