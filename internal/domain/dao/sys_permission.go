@@ -32,7 +32,10 @@ type SysPermissionDao struct {
 
 var SysPermissionDaoInstance = &SysPermissionDao{&dao{db: getDb}}
 
-func (s *SysPermissionDao) FindRolesByUid(context context.Context, uid int32) ([]*SysPermissionPO, error) {
+func (s *SysPermissionDao) FindPermissionsByUid(context context.Context, uid int32) ([]*SysPermissionPO, error) {
+	if constants.IsSuperAdmin(uid) {
+		return s.FindValidPermissions(context)
+	}
 	var permissions []*SysPermissionPO
 	result := getDbFromContext(context).Raw("SELECT * FROM sys_permission sp WHERE sp.status = ? AND  EXISTS("+
 		"SELECT 1 FROM sys_role_permission srp , sys_user_role sur WHERE sp.id = srp.permission_id and srp.role_id = sur.role_id and sur.uid = ?)", constants.DbNormalStatus, uid).Scan(&permissions)
@@ -40,4 +43,10 @@ func (s *SysPermissionDao) FindRolesByUid(context context.Context, uid int32) ([
 		return nil, result.Error
 	}
 	return permissions, nil
+}
+
+func (s *SysPermissionDao) FindValidPermissions(context context.Context) ([]*SysPermissionPO, error) {
+	var permissions []*SysPermissionPO
+	result := getDbFromContext(context).Where("status = ?", constants.DbNormalStatus).Find(&permissions)
+	return permissions, result.Error
 }

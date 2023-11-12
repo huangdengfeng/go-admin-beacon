@@ -1,6 +1,6 @@
 login:
   # M
-  accessTokenExpire: 10
+  accessTokenExpire: 120
   tokenSignKey: "MBe&ekkoIp_5WAlhd&vIbbllxIjT6iMB"
 cors:
   enable: true

@@ -30,6 +30,9 @@ type SysRoleDao struct {
 var SysRoleDaoInstance = &SysRoleDao{&dao{db: getDb}}
 
 func (s *SysRoleDao) FindRolesByUid(context context.Context, uid int32) ([]*SysRolePO, error) {
+	if constants.IsSuperAdmin(uid) {
+		return s.FindValidRoles(context)
+	}
 	var roles []*SysRolePO
 	result := getDbFromContext(context).Raw("SELECT * FROM sys_role sr WHERE sr.status = ? AND "+
 		"EXISTS(SELECT 1 FROM sys_user_role sur WHERE sur.role_id = sr.id AND sur.uid = ?)", constants.DbNormalStatus, uid).Scan(&roles)
@@ -37,4 +40,10 @@ func (s *SysRoleDao) FindRolesByUid(context context.Context, uid int32) ([]*SysR
 		return nil, result.Error
 	}
 	return roles, nil
+}
+
+func (s *SysRoleDao) FindValidRoles(context context.Context) ([]*SysRolePO, error) {
+	var pos []*SysRolePO
+	result := getDbFromContext(context).Where("status = ?", constants.DbNormalStatus).Find(&pos)
+	return pos, result.Error
 }

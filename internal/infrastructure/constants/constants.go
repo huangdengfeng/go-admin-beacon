@@ -10,3 +10,7 @@ const Comma = ","
 const Underline = "_"
 const DbNormalStatus = 1
 const DbInvalidStatus = 2
+
+func IsSuperAdmin(uid int32) bool {
+	return uid == SuperAdminUserId
+}

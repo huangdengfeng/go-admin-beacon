@@ -50,7 +50,7 @@ func (s *UserDetailsService) GetUserDetails(uid int32) (*UserDetailsVO, error) {
 		if nil != err {
 			return err
 		}
-		permissions, err = s.sysPermissionDao.FindRolesByUid(ctx, uid)
+		permissions, err = s.sysPermissionDao.FindPermissionsByUid(ctx, uid)
 		if nil != err {
 			return err
 		}

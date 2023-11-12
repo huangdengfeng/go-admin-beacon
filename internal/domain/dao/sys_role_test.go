@@ -7,6 +7,11 @@ import (
 )
 
 func TestSysRoleDao_FindRolesByUid(t *testing.T) {
+	var pos *SysRolePO
+	var m map[string]*SysRolePO
+	var c chan int
+
+	fmt.Printf("pos:%p,m:%p,c:%p", pos, &m, &c)
 	s := make([]SysRolePO, 0, 10)
 	r := SysRolePO{Name: "test"}
 	s = append(s, r)
