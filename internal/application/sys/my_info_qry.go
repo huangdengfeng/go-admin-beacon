@@ -38,15 +38,15 @@ func NewMyInfoExe() *myInfoExe {
 	}
 }
 
-func (e *myInfoExe) Execute(ctx context.Context) *response.Response {
+func (e *myInfoExe) Execute(ctx context.Context) (*response.Response, error) {
 	userDetailsVO := auth.GetUserFromContext(ctx)
 	po, err := e.sysUserDao.FindByUid(ctx, userDetailsVO.UserId)
 	if err != nil {
-		return response.Error(err)
+		return nil, err
 	}
 	roles, err := e.sysRoleDao.FindRolesByUid(ctx, po.Uid)
 	if err != nil {
-		return response.Error(err)
+		return nil, err
 	}
 	// var RoleNames []string 为nil ,json 字段为null 对前端不友好
 	var RoleNames = make([]string, 0)
@@ -63,6 +63,6 @@ func (e *myInfoExe) Execute(ctx context.Context) *response.Response {
 		RoleNames:   RoleNames,
 		Permissions: userDetailsVO.PermissionCodes,
 	}
-	return response.Success(co)
+	return response.Success(co), nil
 
 }

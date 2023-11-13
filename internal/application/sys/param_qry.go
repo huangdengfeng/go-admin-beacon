@@ -27,7 +27,7 @@ func NewParamQryExe() *paramQryExe {
 	return &paramQryExe{}
 }
 
-func (e *paramQryExe) Execute(_ context.Context) *response.Response {
+func (e *paramQryExe) Execute(_ context.Context) (*response.Response, error) {
 	instance := config.AppDictInstance
 	dictsMap := make(map[string][]*DictCO, len(instance))
 	for k, v := range instance {
@@ -43,5 +43,5 @@ func (e *paramQryExe) Execute(_ context.Context) *response.Response {
 	}
 	return response.Success(&ParamCO{
 		Dicts: dictsMap,
-	})
+	}), nil
 }

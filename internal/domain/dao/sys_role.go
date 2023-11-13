@@ -34,12 +34,9 @@ func (s *SysRoleDao) FindRolesByUid(context context.Context, uid int32) ([]*SysR
 		return s.FindValidRoles(context)
 	}
 	var roles []*SysRolePO
-	result := getDbFromContext(context).Raw("SELECT * FROM sys_role sr WHERE sr.status = ? AND "+
-		"EXISTS(SELECT 1 FROM sys_user_role sur WHERE sur.role_id = sr.id AND sur.uid = ?)", constants.DbNormalStatus, uid).Scan(&roles)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return roles, nil
+	sql := "SELECT * FROM sys_role sr WHERE sr.status = ? AND EXISTS(SELECT 1 FROM sys_user_role sur WHERE sur.role_id = sr.id AND sur.uid = ?)"
+	result := getDbFromContext(context).Raw(sql, constants.DbNormalStatus, uid).Scan(&roles)
+	return roles, result.Error
 }
 
 func (s *SysRoleDao) FindValidRoles(context context.Context) ([]*SysRolePO, error) {

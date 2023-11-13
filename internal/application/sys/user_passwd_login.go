@@ -26,19 +26,19 @@ func NewUserPasswdLoginExe() *userPasswdLoginExe {
 	return &userPasswdLoginExe{userPasswdVerifyService: sys.UserPasswdVerifyServiceInstance, userTokenService: sys.UserTokenServiceInstance}
 }
 
-func (e *userPasswdLoginExe) Execute(cmd *UserPasswdLoginCmd) *response.Response {
+func (e *userPasswdLoginExe) Execute(cmd *UserPasswdLoginCmd) (*response.Response, error) {
 	verify, err := e.userPasswdVerifyService.Verify(cmd.Username, cmd.Password)
 	if nil != err {
-		return response.Error(err)
+		return nil, err
 	}
 	// 用户名密码错误
 	if !verify {
-		return response.Error(errors.UserPasswdWrong)
+		return response.Error(errors.UserPasswdWrong), nil
 	}
 	// 颁发token
 	token, err := e.userTokenService.Create(cmd.Username)
 	if nil != err {
-		return response.Error(err)
+		return nil, err
 	}
-	return response.Success(&AuthorizationTokenCO{token})
+	return response.Success(&AuthorizationTokenCO{token}), nil
 }

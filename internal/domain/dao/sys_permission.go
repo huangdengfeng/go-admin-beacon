@@ -37,12 +37,9 @@ func (s *SysPermissionDao) FindPermissionsByUid(context context.Context, uid int
 		return s.FindValidPermissions(context)
 	}
 	var permissions []*SysPermissionPO
-	result := getDbFromContext(context).Raw("SELECT * FROM sys_permission sp WHERE sp.status = ? AND  EXISTS("+
-		"SELECT 1 FROM sys_role_permission srp , sys_user_role sur WHERE sp.id = srp.permission_id and srp.role_id = sur.role_id and sur.uid = ?)", constants.DbNormalStatus, uid).Scan(&permissions)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return permissions, nil
+	sql := "SELECT * FROM sys_permission sp WHERE sp.status = ? AND  EXISTS(SELECT 1 FROM sys_role_permission srp , sys_user_role sur WHERE sp.id = srp.permission_id and srp.role_id = sur.role_id and sur.uid = ?)"
+	result := getDbFromContext(context).Raw(sql, constants.DbNormalStatus, uid).Scan(&permissions)
+	return permissions, result.Error
 }
 
 func (s *SysPermissionDao) FindValidPermissions(context context.Context) ([]*SysPermissionPO, error) {

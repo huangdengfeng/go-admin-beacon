@@ -17,7 +17,7 @@ type UserDetailsVO struct {
 	RoleCodes []string
 }
 
-// 兼容java spring security 写法
+// RolePrefix 兼容java spring security 写法
 const RolePrefix = "ROLE_"
 
 type UserDetailsService struct {

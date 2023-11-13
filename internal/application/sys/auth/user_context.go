@@ -15,7 +15,12 @@ func ContextWithUser(c context.Context, details *sys.UserDetailsVO) context.Cont
 
 // GetUserFromContext 获取用户
 func GetUserFromContext(c context.Context) *sys.UserDetailsVO {
-	return c.Value(UserKey).(*sys.UserDetailsVO)
+	value := c.Value(UserKey)
+	if value != nil {
+		return value.(*sys.UserDetailsVO)
+	} else {
+		return nil
+	}
 }
 
 // setGinUserContext gin 上下文放入用户信息

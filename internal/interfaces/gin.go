@@ -1,10 +1,13 @@
 package interfaces
 
+// 处理gin web 中间建逻辑
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go-admin-beacon/internal/application/sys/auth"
 	"go-admin-beacon/internal/infrastructure/config"
+	"go-admin-beacon/internal/infrastructure/response"
+	"net/http"
 	"time"
 )
 
@@ -38,4 +41,13 @@ func CreateRouter() *gin.Engine {
 	}
 
 	return router
+}
+
+func packResponse(c *gin.Context, resp *response.Response, err error) {
+	if err == nil {
+		c.JSON(http.StatusOK, resp)
+		return
+	}
+	// gin 上下文放入错误，全局处理
+	_ = c.Error(err)
 }

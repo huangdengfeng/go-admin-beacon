@@ -4,7 +4,9 @@ package sys
 
 import (
 	"context"
+	"go-admin-beacon/internal/application/sys/auth"
 	"go-admin-beacon/internal/domain/dao"
+	"go-admin-beacon/internal/infrastructure/errors"
 	"go-admin-beacon/internal/infrastructure/request"
 	"go-admin-beacon/internal/infrastructure/response"
 	"time"
@@ -41,7 +43,10 @@ func NewUserPageQryExe() *userPageQryExe {
 	return &userPageQryExe{dao.SysUserDaoInstance}
 }
 
-func (e *userPageQryExe) Execute(_ context.Context, qry *UserPageQry) *response.Response {
+func (e *userPageQryExe) Execute(context context.Context, qry *UserPageQry) (*response.Response, error) {
+	if !auth.CheckPermission(context, "sys:user:qry") {
+		return nil, errors.NoPermission
+	}
 	condition := &dao.SysUserPOCondition{
 		UserName:  qry.UserName,
 		FuzzyName: qry.FuzzyName,
@@ -51,7 +56,7 @@ func (e *userPageQryExe) Execute(_ context.Context, qry *UserPageQry) *response.
 
 	pos, total, err := e.sysUserDao.FindByPage(condition, qry.Page, qry.PageSize)
 	if err != nil {
-		return response.Error(err)
+		return nil, err
 	}
 
 	cos := make([]UserCO, len(pos))
@@ -77,5 +82,5 @@ func (e *userPageQryExe) Execute(_ context.Context, qry *UserPageQry) *response.
 		Total: *total,
 		Data:  cos,
 	}
-	return response.Success(page)
+	return response.Success(page), nil
 }
