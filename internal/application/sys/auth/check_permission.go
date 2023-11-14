@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"go-admin-beacon/internal/infrastructure/constants"
 	"golang.org/x/exp/slices"
 )
 
@@ -14,5 +15,5 @@ func CheckPermission(context context.Context, code string) bool {
 
 func CheckRole(context context.Context, code string) bool {
 	userDetailsVO := GetUserFromContext(context)
-	return nil != userDetailsVO && slices.Contains(userDetailsVO.RoleCodes, code)
+	return nil != userDetailsVO && slices.Contains(userDetailsVO.RoleCodes, constants.RolePrefix+code)
 }

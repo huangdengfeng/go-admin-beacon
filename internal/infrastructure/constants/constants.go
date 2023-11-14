@@ -11,6 +11,9 @@ const Underline = "_"
 const DbNormalStatus = 1
 const DbInvalidStatus = 2
 
+// RolePrefix 兼容java spring security 写法
+const RolePrefix = "ROLE_"
+
 func IsSuperAdmin(uid int32) bool {
 	return uid == SuperAdminUserId
 }

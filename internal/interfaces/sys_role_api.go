@@ -8,18 +8,17 @@ import (
 	"net/http"
 )
 
-type sysLoginApi struct {
+type sysRoleApi struct {
 }
 
-var userPasswdLoginExe = sys.NewUserPasswdLoginExe()
+var roleListQryExe = sys.NewRoleListQryExe()
 
-// UserPasswdLogin 账号密码登录
-func (s *sysLoginApi) UserPasswdLogin(c *gin.Context) {
-	var cmd *sys.UserPasswdLoginCmd
-	if err := c.ShouldBindJSON(&cmd); err != nil {
+func (s *sysRoleApi) qryRoleList(c *gin.Context) {
+	var qry *sys.RoleListQry
+	if err := c.ShouldBindJSON(&qry); err != nil {
 		c.JSON(http.StatusOK, response.ErrorWithCodeMsg(errors.BadArgs.Code, err.Error()))
 		return
 	}
-	response, err := userPasswdLoginExe.Execute(cmd)
+	response, err := roleListQryExe.Execute(c, qry)
 	packResponse(c, response, err)
 }

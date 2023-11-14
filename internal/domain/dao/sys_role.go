@@ -44,3 +44,9 @@ func (s *SysRoleDao) FindValidRoles(context context.Context) ([]*SysRolePO, erro
 	result := getDbFromContext(context).Where("status = ?", constants.DbNormalStatus).Find(&pos)
 	return pos, result.Error
 }
+
+func (s *SysRoleDao) FindAllRoles(context context.Context) ([]*SysRolePO, error) {
+	var pos []*SysRolePO
+	result := getDbFromContext(context).Find(&pos)
+	return pos, result.Error
+}

@@ -2,13 +2,17 @@ package auth
 
 import (
 	"fmt"
-	"go-admin-beacon/internal/infrastructure/errors"
 	"testing"
 )
 
+func f(i **int) {
+	var j int = 10
+	*i = &j
+}
 func Test_checkPermission(t *testing.T) {
-	var e *errors.Error
-	fmt.Printf("xxx%p", &e)
+	var a *int
+	f(&a)
+	fmt.Println(*a)
 }
 
 func Test_checkRole(t *testing.T) {

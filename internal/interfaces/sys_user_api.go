@@ -17,8 +17,8 @@ var myInfoExe = sys.NewMyInfoExe()
 
 // UserPageQry 用户分页查询
 func (s *sysUserApi) UserPageQry(c *gin.Context) {
-	qry := &sys.UserPageQry{}
-	if err := c.ShouldBindJSON(qry); err != nil {
+	var qry *sys.UserPageQry
+	if err := c.ShouldBindJSON(&qry); err != nil {
 		c.JSON(http.StatusOK, response.ErrorWithCodeMsg(errors.BadArgs.Code, err.Error()))
 		return
 	}

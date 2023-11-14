@@ -30,6 +30,7 @@ func CreateRouter() *gin.Engine {
 	sysLoginApi := &sysLoginApi{}
 	sysUserApi := &sysUserApi{}
 	sysParamApi := &sysParamApi{}
+	sysRoleApi := &sysRoleApi{}
 
 	// 分组，也可以直接router.POST(xxxx)
 	sys := router.Group("/sys")
@@ -37,7 +38,10 @@ func CreateRouter() *gin.Engine {
 		sys.POST("/login/user_passwd", sysLoginApi.UserPasswdLogin)
 		sys.POST("/user/page", sysUserApi.UserPageQry)
 		sys.GET("/user/my", sysUserApi.My)
+
 		sys.GET("/param/qry", sysParamApi.QryParam)
+
+		sys.POST("/role/list", sysRoleApi.qryRoleList)
 	}
 
 	return router

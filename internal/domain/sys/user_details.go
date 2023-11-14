@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"go-admin-beacon/internal/domain/dao"
+	"go-admin-beacon/internal/infrastructure/constants"
 	"go-admin-beacon/internal/infrastructure/errors"
 )
 
@@ -16,9 +17,6 @@ type UserDetailsVO struct {
 	// ROLE_前缀
 	RoleCodes []string
 }
-
-// RolePrefix 兼容java spring security 写法
-const RolePrefix = "ROLE_"
 
 type UserDetailsService struct {
 	sysUserDao       *dao.SysUserDao
@@ -63,7 +61,8 @@ func (s *UserDetailsService) GetUserDetails(uid int32) (*UserDetailsVO, error) {
 	var roleCodes = make([]string, 0)
 	var permissionCodes = make([]string, 0)
 	for _, role := range roles {
-		roleCodes = append(roleCodes, RolePrefix+role.Code)
+		// 兼容java 写法，添加前缀
+		roleCodes = append(roleCodes, constants.RolePrefix+role.Code)
 	}
 
 	for _, permission := range permissions {
