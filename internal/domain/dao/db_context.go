@@ -33,7 +33,7 @@ func getDb() *gorm.DB {
 
 func createDbWithContext(ctx context.Context) *gorm.DB {
 	if config.DebugEnable {
-		return config.SqlClient.Debug().WithContext(context.Background())
+		return config.SqlClient.Debug().WithContext(ctx)
 	}
 	// WithContext 返回是每个会话，可以DB sql之前互不干扰
 	return config.SqlClient.WithContext(ctx)

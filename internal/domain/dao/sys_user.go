@@ -52,7 +52,7 @@ type SysUserDao struct {
 
 var SysUserDaoInstance = &SysUserDao{&dao{getDb}}
 
-func (s *SysUserDao) FindByPage(condition *SysUserPOCondition, page int, pageSize int) ([]*SysUserPO, *int64, error) {
+func (s *SysUserDao) FindByPage(condition *SysUserPOCondition, page int, pageSize int) ([]*SysUserPO, int64, error) {
 	db := s.db().Limit(pageSize).Offset(pageSize * (page - 1))
 	if condition.UserName != "" {
 		db.Where("user_name = ?", condition.UserName)
@@ -72,20 +72,20 @@ func (s *SysUserDao) FindByPage(condition *SysUserPOCondition, page int, pageSiz
 
 	if condition.OrderBy != "" {
 		if convertedOrder, err := checkAndConvertOrder(condition.OrderBy, sysUserAllowedFields); err != nil {
-			return nil, nil, err
+			return nil, 0, err
 		} else {
 			db.Order(convertedOrder)
 		}
 	}
 	var users []*SysUserPO
 	if result := db.Find(&users); result.Error != nil {
-		return nil, nil, result.Error
+		return nil, 0, result.Error
 	}
 	var total int64
 	if result := db.Count(&total); result.Error != nil {
-		return nil, nil, result.Error
+		return nil, 0, result.Error
 	}
-	return users, &total, nil
+	return users, total, nil
 }
 
 func (s *SysUserDao) FindByUid(ctx context.Context, uid int32) (*SysUserPO, error) {
@@ -102,9 +102,9 @@ func (s *SysUserDao) FindByUid(ctx context.Context, uid int32) (*SysUserPO, erro
 	}
 }
 
-func (s *SysUserDao) FindByUserName(userName string) (*SysUserPO, error) {
+func (s *SysUserDao) FindByUserName(ctx context.Context, userName string) (*SysUserPO, error) {
 	var po SysUserPO
-	result := s.db().Take(&po, "user_name = ?", userName)
+	result := getDbFromContext(ctx).Take(&po, "user_name = ?", userName)
 	if nil == result.Error {
 		return &po, nil
 	}
@@ -115,20 +115,15 @@ func (s *SysUserDao) FindByUserName(userName string) (*SysUserPO, error) {
 	}
 }
 
-func (s *SysUserDao) Save(po *SysUserPO) (*int32, error) {
-	var uid *int32
-	err := s.db().Transaction(func(tx *gorm.DB) error {
-		result := tx.Create(po)
-		if result.Error != nil {
-			return errors.Newf(errors.SqlError, result.Error.Error())
-		}
-		if result.RowsAffected != 1 {
-			return errors.Newf(errors.RowsAffectedNotMatch, result.RowsAffected)
-		}
-		uid = &po.Uid
-		return nil
-	})
-	return uid, err
+func (s *SysUserDao) Save(ctx context.Context, po *SysUserPO) (int32, error) {
+	result := getDbFromContext(ctx).Create(po)
+	if result.Error != nil {
+		return 0, errors.Newf(errors.SqlError, result.Error.Error())
+	}
+	if result.RowsAffected != 1 {
+		return 0, errors.Newf(errors.RowsAffectedNotMatch, result.RowsAffected)
+	}
+	return po.Uid, nil
 }
 
 func (s *SysUserDao) Update(po *SysUserPO) error {

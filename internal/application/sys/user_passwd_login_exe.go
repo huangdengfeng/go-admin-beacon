@@ -3,6 +3,7 @@ package sys
 // 账号密码登录
 
 import (
+	"context"
 	"go-admin-beacon/internal/domain/sys"
 	"go-admin-beacon/internal/infrastructure/errors"
 	"go-admin-beacon/internal/infrastructure/response"
@@ -26,8 +27,8 @@ func NewUserPasswdLoginExe() *userPasswdLoginExe {
 	return &userPasswdLoginExe{userPasswdVerifyService: sys.UserPasswdVerifyServiceInstance, userTokenService: sys.UserTokenServiceInstance}
 }
 
-func (e *userPasswdLoginExe) Execute(cmd *UserPasswdLoginCmd) (*response.Response, error) {
-	verify, err := e.userPasswdVerifyService.Verify(cmd.Username, cmd.Password)
+func (e *userPasswdLoginExe) Execute(ctx context.Context, cmd *UserPasswdLoginCmd) (*response.Response, error) {
+	verify, err := e.userPasswdVerifyService.Verify(ctx, cmd.Username, cmd.Password)
 	if nil != err {
 		return nil, err
 	}
@@ -36,7 +37,7 @@ func (e *userPasswdLoginExe) Execute(cmd *UserPasswdLoginCmd) (*response.Respons
 		return response.Error(errors.UserPasswdWrong), nil
 	}
 	// 颁发token
-	token, err := e.userTokenService.Create(cmd.Username)
+	token, err := e.userTokenService.Create(ctx, cmd.Username)
 	if nil != err {
 		return nil, err
 	}

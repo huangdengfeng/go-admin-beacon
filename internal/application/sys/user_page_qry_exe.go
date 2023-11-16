@@ -59,7 +59,7 @@ func (e *userPageQryExe) Execute(context context.Context, qry *UserPageQry) (*re
 		return nil, err
 	}
 
-	cos := make([]UserCO, len(pos))
+	cos := make([]UserCO, 0, len(pos))
 
 	for _, po := range pos {
 		cos = append(cos, UserCO{
@@ -79,7 +79,7 @@ func (e *userPageQryExe) Execute(context context.Context, qry *UserPageQry) (*re
 	}
 
 	page := &response.Page[UserCO]{
-		Total: *total,
+		Total: total,
 		Data:  cos,
 	}
 	return response.Success(page), nil

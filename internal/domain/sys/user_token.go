@@ -3,6 +3,7 @@ package sys
 // 登录token创建
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"go-admin-beacon/internal/domain/dao"
@@ -21,8 +22,8 @@ var UserTokenServiceInstance = &UserTokenService{
 	sysUserDao: dao.SysUserDaoInstance,
 }
 
-func (s *UserTokenService) Create(userName string) (string, error) {
-	po, err := s.sysUserDao.FindByUserName(userName)
+func (s *UserTokenService) Create(ctx context.Context, userName string) (string, error) {
+	po, err := s.sysUserDao.FindByUserName(ctx, userName)
 	if nil != err {
 		return "", err
 	}

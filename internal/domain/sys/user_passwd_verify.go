@@ -1,6 +1,7 @@
 package sys
 
 import (
+	"context"
 	"go-admin-beacon/internal/domain/dao"
 	"go-admin-beacon/internal/infrastructure/security"
 )
@@ -13,8 +14,8 @@ var UserPasswdVerifyServiceInstance = &UserPasswdVerifyService{
 	sysUserDao: dao.SysUserDaoInstance,
 }
 
-func (s *UserPasswdVerifyService) Verify(userName string, password string) (bool, error) {
-	po, err := s.sysUserDao.FindByUserName(userName)
+func (s *UserPasswdVerifyService) Verify(ctx context.Context, userName string, password string) (bool, error) {
+	po, err := s.sysUserDao.FindByUserName(ctx, userName)
 	if nil != err {
 		return false, err
 	}

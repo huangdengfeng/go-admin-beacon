@@ -21,20 +21,20 @@ var regex = regexp.MustCompile("([a-z0-9])([A-Z])")
 
 // orderBy 例如 createTime asc,status desc
 // 检查排序字段防止注入,转下划线
-func checkAndConvertOrder(orderBy string, allowedFields []string) (*string, error) {
+func checkAndConvertOrder(orderBy string, allowedFields []string) (string, error) {
 	// 提取排序字段
 	fields := strings.Split(orderBy, constants.Comma)
 	for _, field := range fields {
 		if !slices.Contains(allowedFields, strings.Split(field, " ")[0]) {
 			log.Errorf("orderBy [%s] field [%s] not allowed", orderBy, field)
-			return nil, errors.OrderByNotAllowed
+			return "", errors.OrderByNotAllowed
 		}
 	}
 	// 驼峰转下划线
 	snakeCase := regex.ReplaceAllString(orderBy, "${1}_${2}")
 	result := strings.ToLower(snakeCase)
 
-	return &result, nil
+	return result, nil
 }
 
 func DoTransaction(ctx context.Context, fun func(ctx context.Context) error, opts ...*sql.TxOptions) error {

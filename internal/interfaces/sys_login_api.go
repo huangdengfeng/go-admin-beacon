@@ -15,11 +15,11 @@ var userPasswdLoginExe = sys.NewUserPasswdLoginExe()
 
 // UserPasswdLogin 账号密码登录
 func (s *sysLoginApi) UserPasswdLogin(c *gin.Context) {
-	var cmd *sys.UserPasswdLoginCmd
+	var cmd sys.UserPasswdLoginCmd
 	if err := c.ShouldBindJSON(&cmd); err != nil {
 		c.JSON(http.StatusOK, response.ErrorWithCodeMsg(errors.BadArgs.Code, err.Error()))
 		return
 	}
-	response, err := userPasswdLoginExe.Execute(cmd)
+	response, err := userPasswdLoginExe.Execute(c, &cmd)
 	packResponse(c, response, err)
 }

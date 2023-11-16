@@ -38,6 +38,7 @@ func CreateRouter() *gin.Engine {
 		sys.POST("/login/user_passwd", sysLoginApi.UserPasswdLogin)
 		sys.POST("/user/page", sysUserApi.UserPageQry)
 		sys.GET("/user/my", sysUserApi.My)
+		sys.POST("/user/add", sysUserApi.AddUser)
 
 		sys.GET("/param/qry", sysParamApi.QryParam)
 
