@@ -12,10 +12,10 @@ import (
 )
 
 type AddUserCmd struct {
-	UserName string   `json:"userName"`
-	Password string   `json:"password"`
-	Name     string   `json:"name"`
-	Mobile   string   `json:"mobile"`
+	UserName string   `json:"userName" binding:"required,max=50"`
+	Password string   `json:"password" binding:"required,max=50"`
+	Name     string   `json:"name" binding:"required,max=50"`
+	Mobile   string   `json:"mobile" binding:"max=50"`
 	Email    string   `json:"email"`
 	Photo    string   `json:"photo"`
 	Remark   string   `json:"remark"`
