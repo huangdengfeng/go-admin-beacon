@@ -8,7 +8,6 @@ import (
 	"go-admin-beacon/internal/domain/sys"
 	"go-admin-beacon/internal/infrastructure/config"
 	"go-admin-beacon/internal/infrastructure/errors"
-	"go-admin-beacon/internal/infrastructure/response"
 	"go-admin-beacon/internal/infrastructure/security"
 	"net/http"
 	"strconv"
@@ -85,17 +84,6 @@ func Filter(c *gin.Context) {
 	}
 	setGinUserContext(c, details)
 	c.Next()
-	// 统一错误处理
-	for _, e := range c.Errors {
-		// 无权限，则转换为403
-		if e.Err == errors.NoPermission {
-			c.Status(http.StatusForbidden)
-		} else {
-			c.JSON(http.StatusOK, response.Error(e.Err))
-		}
-		c.Abort()
-		return
-	}
 }
 
 func getUserDetails(uid int32) (*sys.UserDetailsVO, error) {

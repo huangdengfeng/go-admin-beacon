@@ -19,12 +19,14 @@ type UserDetailsVO struct {
 }
 
 type UserDetailsService struct {
+	userRoleService  *UserRoleService
 	sysUserDao       *dao.SysUserDao
 	sysRoleDao       *dao.SysRoleDao
 	sysPermissionDao *dao.SysPermissionDao
 }
 
 var UserDetailsServiceInstance = &UserDetailsService{
+	userRoleService:  UserRoleServiceInstance,
 	sysUserDao:       dao.SysUserDaoInstance,
 	sysRoleDao:       dao.SysRoleDaoInstance,
 	sysPermissionDao: dao.SysPermissionDaoInstance,
@@ -44,7 +46,7 @@ func (s *UserDetailsService) GetUserDetails(uid int32) (*UserDetailsVO, error) {
 		if po == nil {
 			return errors.UserNotExists
 		}
-		roles, err = s.sysRoleDao.FindRolesByUid(ctx, po.Uid)
+		roles, err = s.userRoleService.FindRolesByUid(ctx, po.Uid)
 		if nil != err {
 			return err
 		}

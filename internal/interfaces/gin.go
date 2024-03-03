@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-admin-beacon/internal/application/sys/auth"
 	"go-admin-beacon/internal/infrastructure/config"
+	"go-admin-beacon/internal/infrastructure/errors"
 	"go-admin-beacon/internal/infrastructure/response"
 	"net/http"
 	"time"
@@ -27,6 +28,19 @@ func CreateRouter() *gin.Engine {
 	}
 
 	router.Use(auth.Filter)
+	// 统一错误处理
+	router.Use(func(c *gin.Context) {
+		for _, e := range c.Errors {
+			// 无权限，则转换为403
+			if e.Err == errors.NoPermission {
+				c.Status(http.StatusForbidden)
+			} else {
+				c.JSON(http.StatusOK, response.Error(e.Err))
+			}
+			return
+		}
+		c.Next()
+	})
 	sysLoginApi := &sysLoginApi{}
 	sysUserApi := &sysUserApi{}
 	sysParamApi := &sysParamApi{}
@@ -39,6 +53,9 @@ func CreateRouter() *gin.Engine {
 		sys.POST("/user/page", sysUserApi.UserPageQry)
 		sys.GET("/user/my", sysUserApi.My)
 		sys.POST("/user/add", sysUserApi.AddUser)
+		sys.POST("/user/modify", sysUserApi.ModifyUserCmdExe)
+		sys.POST("/user/modify_pwd", sysUserApi.ModifyUserPwd)
+		sys.GET("/user/detail/:uid", sysUserApi.UserDetailQry)
 
 		sys.GET("/param/qry", sysParamApi.QryParam)
 

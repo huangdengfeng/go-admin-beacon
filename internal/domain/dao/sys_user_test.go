@@ -92,7 +92,7 @@ func TestSysUserDao_FindByUserName(t *testing.T) {
 			s := &SysUserDao{
 				dao: tt.fields.dao,
 			}
-			got, err := s.FindByUserName(tt.args.userName)
+			got, err := s.FindByUserName(context.Background(), tt.args.userName)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FindByUserName() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -130,7 +130,7 @@ func TestSysUserDao_Save(t *testing.T) {
 			s := SysUserDao{
 				dao: tt.fields.dao,
 			}
-			if uid, err := s.Save(tt.args.po); (err != nil && *uid > 0) != tt.wantErr {
+			if uid, err := s.Save(context.Background(), tt.args.po); (err != nil && uid > 0) != tt.wantErr {
 				t.Errorf("Save() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -151,5 +151,5 @@ func TestSysUserDao_FindByPage(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	t.Logf("users:%+v,total:%+v", users, *total)
+	t.Logf("users:%+v,total:%+v", users, total)
 }

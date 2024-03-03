@@ -126,16 +126,13 @@ func (s *SysUserDao) Save(ctx context.Context, po *SysUserPO) (int32, error) {
 	return po.Uid, nil
 }
 
-func (s *SysUserDao) Update(po *SysUserPO) error {
-	err := s.db().Transaction(func(tx *gorm.DB) error {
-		result := tx.Save(po)
-		if result.Error != nil {
-			return errors.Newf(errors.SqlError, result.Error.Error())
-		}
-		if result.RowsAffected != 1 {
-			return errors.Newf(errors.RowsAffectedNotMatch, result.RowsAffected)
-		}
-		return nil
-	})
-	return err
+func (s *SysUserDao) Update(ctx context.Context, po *SysUserPO) error {
+	result := getDbFromContext(ctx).Save(po)
+	if result.Error != nil {
+		return errors.Newf(errors.SqlError, result.Error.Error())
+	}
+	if result.RowsAffected != 1 {
+		return errors.Newf(errors.RowsAffectedNotMatch, result.RowsAffected)
+	}
+	return nil
 }
