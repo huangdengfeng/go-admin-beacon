@@ -6,6 +6,7 @@ import (
 	"go-admin-beacon/internal/infrastructure/constants"
 	"go-admin-beacon/internal/infrastructure/errors"
 	"go-admin-beacon/internal/infrastructure/security"
+	"go-admin-beacon/internal/infrastructure/validator"
 	"time"
 )
 
@@ -21,9 +22,9 @@ var UserServiceInstance = &UserService{
 
 // AddUserVO 添加用户值对象
 type AddUserVO struct {
-	UserName string
-	Password string
-	Name     string
+	UserName string `validate:"required"`
+	Password string `validate:"required"`
+	Name     string `validate:"required"`
 	Mobile   string
 	Email    string
 	Photo    string
@@ -34,8 +35,8 @@ type AddUserVO struct {
 // ModifyUserVO 修改用户
 type ModifyUserVO struct {
 	Uid      int32
-	UserName string
-	Name     string
+	UserName string `validate:"required"`
+	Name     string `validate:"required"`
 	Mobile   string
 	Email    string
 	Photo    string
@@ -45,6 +46,9 @@ type ModifyUserVO struct {
 }
 
 func (s *UserService) AddUser(ctx context.Context, vo *AddUserVO, operator int32) (int32, error) {
+	if err := validator.Struct(vo); err != nil {
+		return 0, errors.Newf(errors.BadArgs, err.Error())
+	}
 	var uid int32
 	txFunc := func(ctx context.Context) error {
 		user, err := s.sysUserDao.FindByUserName(ctx, vo.UserName)
@@ -131,6 +135,9 @@ func (s *UserService) ModifyUserPwd(ctx context.Context, uid int32, password str
 }
 
 func (s *UserService) ModifyUser(ctx context.Context, vo *ModifyUserVO, operator int32) error {
+	if err := validator.Struct(vo); err != nil {
+		return errors.Newf(errors.BadArgs, err.Error())
+	}
 	uid := vo.Uid
 	txFun := func(ctx context.Context) error {
 		userPO, err := s.sysUserDao.FindByUid(ctx, uid)

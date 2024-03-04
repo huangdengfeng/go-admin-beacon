@@ -59,10 +59,10 @@ func (e *userPageQryExe) Execute(context context.Context, qry *UserPageQry) (*re
 		return nil, err
 	}
 
-	cos := make([]UserCO, 0, len(pos))
+	cos := make([]*UserCO, 0, len(pos))
 
 	for _, po := range pos {
-		cos = append(cos, UserCO{
+		cos = append(cos, &UserCO{
 			Uid:        po.Uid,
 			UserName:   po.UserName,
 			Name:       po.Name,
@@ -78,7 +78,7 @@ func (e *userPageQryExe) Execute(context context.Context, qry *UserPageQry) (*re
 		})
 	}
 
-	page := &response.Page[UserCO]{
+	page := &response.Page[*UserCO]{
 		Total: total,
 		Data:  cos,
 	}
