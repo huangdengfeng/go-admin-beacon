@@ -6,7 +6,6 @@ import (
 	"context"
 	"go-admin-beacon/internal/application/sys/auth"
 	"go-admin-beacon/internal/domain/dao"
-	"go-admin-beacon/internal/infrastructure/errors"
 	"go-admin-beacon/internal/infrastructure/request"
 	"go-admin-beacon/internal/infrastructure/response"
 	"time"
@@ -44,8 +43,8 @@ func NewUserPageQryExe() *userPageQryExe {
 }
 
 func (e *userPageQryExe) Execute(context context.Context, qry *UserPageQry) (*response.Response, error) {
-	if !auth.CheckPermission(context, "sys:user:qry") {
-		return nil, errors.NoPermission
+	if err := auth.CheckPermission(context, "sys:user:qry"); err != nil {
+		return nil, err
 	}
 	condition := &dao.SysUserPOCondition{
 		UserName:  qry.UserName,

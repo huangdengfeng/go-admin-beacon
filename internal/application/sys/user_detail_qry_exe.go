@@ -44,19 +44,19 @@ type UserDetailCO struct {
 
 type userDetailQryExe struct {
 	sysUserDao      *dao.SysUserDao
-	userRoleService *sys.UserRoleService
+	userRoleService *sys.UserPermissionService
 }
 
 func NewUserDetailQryExe() *userDetailQryExe {
 	return &userDetailQryExe{
 		sysUserDao:      dao.SysUserDaoInstance,
-		userRoleService: sys.UserRoleServiceInstance,
+		userRoleService: sys.UserPermissionServiceInstance,
 	}
 }
 
 func (e *userDetailQryExe) Execute(ctx context.Context, qry *UserDetailQry) (*response.Response, error) {
-	if !auth.CheckPermission(ctx, "sys:user:qry") {
-		return nil, errors.NoPermission
+	if err := auth.CheckPermission(ctx, "sys:user:qry"); err != nil {
+		return nil, err
 	}
 	var userPO *dao.SysUserPO
 	var sysRolePOs []*dao.SysRolePO

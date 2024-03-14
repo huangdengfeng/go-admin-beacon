@@ -34,6 +34,9 @@ func CreateRouter() *gin.Engine {
 			// 无权限，则转换为403
 			if e.Err == errors.NoPermission {
 				c.Status(http.StatusForbidden)
+			} else if e.Err == errors.LoginSessionInvalid {
+				c.Status(http.StatusUnauthorized)
+
 			} else {
 				c.JSON(http.StatusOK, response.Error(e.Err))
 			}
@@ -45,6 +48,7 @@ func CreateRouter() *gin.Engine {
 	sysUserApi := &sysUserApi{}
 	sysParamApi := &sysParamApi{}
 	sysRoleApi := &sysRoleApi{}
+	sysPermissionApi := &sysPermissionApi{}
 
 	// 分组，也可以直接router.POST(xxxx)
 	sys := router.Group("/sys")
@@ -60,6 +64,7 @@ func CreateRouter() *gin.Engine {
 		sys.GET("/param/qry", sysParamApi.QryParam)
 
 		sys.POST("/role/list", sysRoleApi.qryRoleList)
+		sys.POST("/permission/list", sysPermissionApi.qryPermissionList)
 	}
 
 	return router

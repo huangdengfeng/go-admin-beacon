@@ -4,6 +4,8 @@ import (
 	"context"
 	"go-admin-beacon/internal/application/sys/auth"
 	"go-admin-beacon/internal/domain/dao"
+	"go-admin-beacon/internal/infrastructure/constants"
+	"go-admin-beacon/internal/infrastructure/errors"
 	"go-admin-beacon/internal/infrastructure/response"
 )
 
@@ -40,11 +42,19 @@ func NewMyInfoExe() *myInfoExe {
 
 func (e *myInfoExe) Execute(ctx context.Context) (*response.Response, error) {
 	userDetailsVO := auth.GetUserFromContext(ctx)
+	if userDetailsVO == nil {
+		return nil, errors.LoginSessionInvalid
+	}
 	po, err := e.sysUserDao.FindByUid(ctx, userDetailsVO.UserId)
 	if err != nil {
 		return nil, err
 	}
-	roles, err := e.sysRoleDao.FindRolesByUid(ctx, po.Uid)
+	var roles []*dao.SysRolePO
+	if constants.IsSuperAdmin(userDetailsVO.UserId) {
+		roles, err = e.sysRoleDao.FindValidRoles(ctx)
+	} else {
+		roles, err = e.sysRoleDao.FindRolesByUid(ctx, po.Uid)
+	}
 	if err != nil {
 		return nil, err
 	}

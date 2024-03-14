@@ -4,7 +4,6 @@ import (
 	"context"
 	"go-admin-beacon/internal/application/sys/auth"
 	"go-admin-beacon/internal/domain/sys"
-	"go-admin-beacon/internal/infrastructure/errors"
 	"go-admin-beacon/internal/infrastructure/response"
 )
 
@@ -26,8 +25,8 @@ func NewModifyUserPwdCmdExe() *modifyUserPwdCmdExe {
 }
 
 func (e *modifyUserPwdCmdExe) Execute(ctx context.Context, cmd *ModifyUserPwdCmd) (*response.Response, error) {
-	if !auth.CheckPermission(ctx, "sys:user:modify_pwd") {
-		return nil, errors.NoPermission
+	if err := auth.CheckPermission(ctx, "sys:user:modify_pwd"); err != nil {
+		return nil, err
 	}
 	userDetailsVO := auth.GetUserFromContext(ctx)
 	if err := e.userService.ModifyUserPwd(ctx, cmd.Uid, cmd.Password, userDetailsVO.UserId); err != nil {

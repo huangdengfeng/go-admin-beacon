@@ -6,18 +6,28 @@ import (
 	"go-admin-beacon/internal/infrastructure/constants"
 )
 
-// UserRoleService 用户角色服务
-type UserRoleService struct {
-	sysRoleDao *dao.SysRoleDao
+// UserPermissionService 用户角色服务
+type UserPermissionService struct {
+	sysRoleDao       *dao.SysRoleDao
+	sysPermissionDao *dao.SysPermissionDao
 }
 
-var UserRoleServiceInstance = &UserRoleService{
-	dao.SysRoleDaoInstance,
+var UserPermissionServiceInstance = &UserPermissionService{
+	sysRoleDao:       dao.SysRoleDaoInstance,
+	sysPermissionDao: dao.SysPermissionDaoInstance,
 }
 
-func (s *UserRoleService) FindRolesByUid(ctx context.Context, uid int32) ([]*dao.SysRolePO, error) {
+func (s *UserPermissionService) FindRolesByUid(ctx context.Context, uid int32) ([]*dao.SysRolePO, error) {
 	if constants.IsSuperAdmin(uid) {
 		return s.sysRoleDao.FindValidRoles(ctx)
 	}
 	return s.sysRoleDao.FindRolesByUid(ctx, uid)
+}
+
+func (s *UserPermissionService) FindPermissionsByUid(ctx context.Context, uid int32) ([]*dao.SysPermissionPO, error) {
+	if constants.IsSuperAdmin(uid) {
+		return s.sysPermissionDao.FindValidPermissions(ctx)
+	} else {
+		return s.sysPermissionDao.FindPermissionsByUid(ctx, uid)
+	}
 }

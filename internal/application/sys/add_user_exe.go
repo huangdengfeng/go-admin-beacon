@@ -31,10 +31,14 @@ func NewAddUserCmdExe() *addUserCmdExe {
 }
 
 func (e *addUserCmdExe) Execute(ctx context.Context, cmd *AddUserCmd) (*response.Response, error) {
-	if !auth.CheckPermission(ctx, "sys:user:add") {
-		return nil, errors.NoPermission
+	if err := auth.CheckPermission(ctx, "sys:user:add"); err != nil {
+		return nil, err
 	}
+
 	detailsVO := auth.GetUserFromContext(ctx)
+	if detailsVO == nil {
+		return nil, errors.LoginSessionInvalid
+	}
 	txFunc := func(ctx context.Context) error {
 		_, err := e.userService.AddUser(ctx, &sys.AddUserVO{
 			UserName: cmd.UserName,
