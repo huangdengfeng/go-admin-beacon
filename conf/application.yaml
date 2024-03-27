@@ -25,7 +25,7 @@ log:
   outputToConsole: true
 db:
   # user:password , timeout for connection timeout
-  dsn: '%s:%s@tcp(127.0.0.1:3306)/admin-beacon?charset=utf8mb4&parseTime=True&loc=Local&timeout=1s'
+  dsn: '%s:%s@tcp(127.0.0.1:3306)/admin-beacon?charset=utf8mb4&parseTime=True&loc=Local&timeout=2s&readTimeout=60s'
   user: root
   password: 12345678
   maxOpenConns: 10
